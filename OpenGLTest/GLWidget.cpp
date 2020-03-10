@@ -3,23 +3,17 @@
 #include <QOpenGLTexture>
 #include <QMouseEvent>
 
-GLWidget::GLWidget(QWidget *parent)
-	: QOpenGLWidget(parent),
-	clearColor(Qt::black),
-	xRot(0),
-	yRot(0),
-	zRot(0),
-	program(0)
+GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), clearColor(Qt::black), xRot(0), yRot(0), zRot(0), program(0)
 {
-	memset(textures, 0, sizeof(textures));
 }
 
 GLWidget::~GLWidget()
 {
 	makeCurrent();
 	vbo.destroy();
-	for (int i = 0; i < 6; ++i)
+	for (int i = 0; i < 6; ++i) {
 		delete textures[i];
+	}
 	delete program;
 	doneCurrent();
 }
@@ -57,35 +51,9 @@ void GLWidget::initializeGL()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-#define PROGRAM_VERTEX_ATTRIBUTE 0
-#define PROGRAM_TEXCOORD_ATTRIBUTE 1
-
-	QOpenGLShader *vshader = new QOpenGLShader(QOpenGLShader::Vertex, this);
-	const char *vsrc =
-		"attribute highp vec4 vertex;\n"
-		"attribute mediump vec4 texCoord;\n"
-		"varying mediump vec4 texc;\n"
-		"uniform mediump mat4 matrix;\n"
-		"void main(void)\n"
-		"{\n"
-		"    gl_Position = matrix * vertex;\n"
-		"    texc = texCoord;\n"
-		"}\n";
-	vshader->compileSourceCode(vsrc);
-
-	QOpenGLShader *fshader = new QOpenGLShader(QOpenGLShader::Fragment, this);
-	const char *fsrc =
-		"uniform sampler2D texture;\n"
-		"varying mediump vec4 texc;\n"
-		"void main(void)\n"
-		"{\n"
-		"    gl_FragColor = texture2D(texture, texc.st);\n"
-		"}\n";
-	fshader->compileSourceCode(fsrc);
-
 	program = new QOpenGLShaderProgram;
-	program->addShader(vshader);
-	program->addShader(fshader);
+	program->addShaderFromSourceFile(QOpenGLShader::Vertex, "shaders/vert.glsl");
+	program->addShaderFromSourceFile(QOpenGLShader::Fragment, "shaders/frag.glsl");
 	program->bindAttributeLocation("vertex", PROGRAM_VERTEX_ATTRIBUTE);
 	program->bindAttributeLocation("texCoord", PROGRAM_TEXCOORD_ATTRIBUTE);
 	program->link();
@@ -158,8 +126,9 @@ void GLWidget::makeObject()
 		{ { -1, -1, +1 }, { +1, -1, +1 }, { +1, +1, +1 }, { -1, +1, +1 } }
 	};
 
-	for (int j = 0; j < 6; ++j)
-		textures[j] = new QOpenGLTexture(QImage(QString("images/side%1.png").arg(j + 1)).mirrored());
+	for (int j = 0; j < 6; ++j) {
+		textures.push_back(new QOpenGLTexture(QImage(QString("images/side%1.png").arg(j + 1)).mirrored()));
+	}
 
 	QVector<GLfloat> vertData;
 	for (int i = 0; i < 6; ++i) {

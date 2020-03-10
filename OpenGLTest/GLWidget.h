@@ -13,6 +13,9 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 	Q_OBJECT
 
 public:
+	enum { PROGRAM_VERTEX_ATTRIBUTE = 0, PROGRAM_TEXCOORD_ATTRIBUTE = 1};
+
+public:
 	explicit GLWidget(QWidget *parent = 0);
 	~GLWidget();
 
@@ -40,7 +43,7 @@ private:
 	int xRot;
 	int yRot;
 	int zRot;
-	QOpenGLTexture *textures[6];
+	std::vector<QOpenGLTexture*> textures;
 	QOpenGLShaderProgram *program;
 	QOpenGLBuffer vbo;
 };
