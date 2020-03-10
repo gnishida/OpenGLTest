@@ -11,30 +11,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
 	ui.setupUi(this);
 	
-	QGridLayout *mainLayout = new QGridLayout;
+	glWidgets = new GLWidget;
+	glWidgets->setClearColor(QColor(0, 255, 0));
+	glWidgets->rotateBy(+42 * 16, +42 * 16, -21 * 16);
 
-	for (int i = 0; i < NumRows; ++i) {
-		for (int j = 0; j < NumColumns; ++j) {
-			QColor clearColor;
-			clearColor.setHsv(((i * NumColumns) + j) * 255
-				/ (NumRows * NumColumns - 1),
-				255, 63);
-
-			glWidgets[i][j] = new GLWidget;
-			glWidgets[i][j]->setClearColor(clearColor);
-			glWidgets[i][j]->rotateBy(+42 * 16, +42 * 16, -21 * 16);
-			mainLayout->addWidget(glWidgets[i][j], i, j);
-
-
-		}
-	}
-	QWidget *widget = new QWidget();
-	widget->setLayout(mainLayout);
-	this->setCentralWidget(widget);
-
-	currentGlWidget = glWidgets[0][0];
-
-
+	this->setCentralWidget(glWidgets);
 
 	setWindowTitle(tr("Textures"));
+
+	connect(ui.actionExit, SIGNAL(triggered()), this, SLOT(close()));
 }
