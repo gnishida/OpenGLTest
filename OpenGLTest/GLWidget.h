@@ -4,6 +4,7 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QOpenGLBuffer>
+#include <QVector3D>
 
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram);
 QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
@@ -21,7 +22,7 @@ public:
 
 	QSize minimumSizeHint() const override;
 	QSize sizeHint() const override;
-	void rotateBy(int xAngle, int yAngle, int zAngle);
+	void rotateBy(const QVector3D& rotationAngle);
 
 protected:
 	void initializeGL() override;
@@ -34,9 +35,7 @@ private:
 	void makeObject();
 
 	QPoint lastPos;
-	int xRot;
-	int yRot;
-	int zRot;
+	QVector3D rotation;
 	std::vector<QOpenGLTexture*> textures;
 	QOpenGLShaderProgram *program;
 	QOpenGLBuffer vbo;

@@ -3,7 +3,7 @@
 #include <QOpenGLTexture>
 #include <QMouseEvent>
 
-GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), xRot(0), yRot(0), zRot(0), program(0)
+GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), program(0)
 {
 }
 
@@ -11,7 +11,7 @@ GLWidget::~GLWidget()
 {
 	makeCurrent();
 	vbo.destroy();
-	for (int i = 0; i < 6; ++i) {
+	for (int i = 0; i < textures.size(); ++i) {
 		delete textures[i];
 	}
 	delete program;
@@ -28,11 +28,9 @@ QSize GLWidget::sizeHint() const
 	return QSize(200, 200);
 }
 
-void GLWidget::rotateBy(int xAngle, int yAngle, int zAngle)
+void GLWidget::rotateBy(const QVector3D& rotationAngle)
 {
-	xRot += xAngle;
-	yRot += yAngle;
-	zRot += zAngle;
+	rotation += rotationAngle;
 	update();
 }
 
@@ -64,9 +62,9 @@ void GLWidget::paintGL()
 	QMatrix4x4 m;
 	m.ortho(-0.5f, +0.5f, +0.5f, -0.5f, 4.0f, 15.0f);
 	m.translate(0.0f, 0.0f, -10.0f);
-	m.rotate(xRot / 16.0f, 1.0f, 0.0f, 0.0f);
-	m.rotate(yRot / 16.0f, 0.0f, 1.0f, 0.0f);
-	m.rotate(zRot / 16.0f, 0.0f, 0.0f, 1.0f);
+	m.rotate(rotation.x(), 1.0f, 0.0f, 0.0f);
+	m.rotate(rotation.y(), 0.0f, 1.0f, 0.0f);
+	m.rotate(rotation.z(), 0.0f, 0.0f, 1.0f);
 
 	program->setUniformValue("matrix", m);
 	program->enableAttributeArray(PROGRAM_VERTEX_ATTRIBUTE);
@@ -96,10 +94,10 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 	int dy = event->y() - lastPos.y();
 
 	if (event->buttons() & Qt::LeftButton) {
-		rotateBy(8 * dy, 8 * dx, 0);
+		rotateBy(QVector3D(dy, dx, 0));
 	}
 	else if (event->buttons() & Qt::RightButton) {
-		rotateBy(8 * dy, 0, 8 * dx);
+		rotateBy(QVector3D(dy, 0, dx));
 	}
 	lastPos = event->pos();
 }

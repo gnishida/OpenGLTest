@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
 	ui.setupUi(this);
 	
-	glWidget.rotateBy(+42 * 16, +42 * 16, -21 * 16);
+	glWidget.rotateBy(QVector3D(42, 42, -21));
 	this->setCentralWidget(&glWidget);
 
 	setWindowTitle(tr("Textures"));
