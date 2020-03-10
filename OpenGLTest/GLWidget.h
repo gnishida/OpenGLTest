@@ -22,10 +22,6 @@ public:
 	QSize minimumSizeHint() const override;
 	QSize sizeHint() const override;
 	void rotateBy(int xAngle, int yAngle, int zAngle);
-	void setClearColor(const QColor &color);
-
-signals:
-	void clicked();
 
 protected:
 	void initializeGL() override;
@@ -33,12 +29,10 @@ protected:
 	void resizeGL(int width, int height) override;
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseMoveEvent(QMouseEvent *event) override;
-	void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
 	void makeObject();
 
-	QColor clearColor;
 	QPoint lastPos;
 	int xRot;
 	int yRot;

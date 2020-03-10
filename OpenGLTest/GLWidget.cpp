@@ -3,7 +3,7 @@
 #include <QOpenGLTexture>
 #include <QMouseEvent>
 
-GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), clearColor(Qt::black), xRot(0), yRot(0), zRot(0), program(0)
+GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), xRot(0), yRot(0), zRot(0), program(0)
 {
 }
 
@@ -36,12 +36,6 @@ void GLWidget::rotateBy(int xAngle, int yAngle, int zAngle)
 	update();
 }
 
-void GLWidget::setClearColor(const QColor &color)
-{
-	clearColor = color;
-	update();
-}
-
 void GLWidget::initializeGL()
 {
 	initializeOpenGLFunctions();
@@ -64,7 +58,7 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-	glClearColor(clearColor.redF(), clearColor.greenF(), clearColor.blueF(), clearColor.alphaF());
+	glClearColor(0, 1, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	QMatrix4x4 m;
@@ -108,11 +102,6 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 		rotateBy(8 * dy, 0, 8 * dx);
 	}
 	lastPos = event->pos();
-}
-
-void GLWidget::mouseReleaseEvent(QMouseEvent * /* event */)
-{
-	emit clicked();
 }
 
 void GLWidget::makeObject()

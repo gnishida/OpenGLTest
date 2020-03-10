@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
 	ui.setupUi(this);
 	
-	glWidget.setClearColor(QColor(0, 255, 0));
 	glWidget.rotateBy(+42 * 16, +42 * 16, -21 * 16);
 	this->setCentralWidget(&glWidget);
 
