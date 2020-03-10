@@ -20,5 +20,5 @@ private:
 	Ui::MainWindowClass ui;
 
 private:
-	GLWidget *glWidgets;
+	GLWidget glWidget;
 };
