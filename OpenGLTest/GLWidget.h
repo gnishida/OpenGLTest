@@ -1,36 +1,16 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
+#include "Asset.h"
+
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLBuffer>
 #include <QVector3D>
 
 #include <glm/glm.hpp>
 
-QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram);
-QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
-
-struct Vertex
-{
-	GLfloat x;
-	GLfloat y;
-	GLfloat z;
-	GLfloat u;
-	GLfloat v;
-
-	Vertex(GLfloat x, GLfloat y, GLfloat z, GLfloat u, GLfloat v) : x(x), y(y), z(z), u(u), v(v) {}
-};
-
-class Asset
-{
-public:
-	QOpenGLVertexArrayObject* vao;
-	QOpenGLBuffer vbo;
-	QOpenGLTexture* texture;
-	std::vector<Vertex> vertices;
-};
+//QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram);
+//QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
 
 class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -61,7 +41,7 @@ private:
 	QVector3D rotation;
 	QOpenGLShaderProgram *program;
 
-	std::vector<Asset> assets;
+	std::vector<Asset*> assets;
 };
 
 #endif

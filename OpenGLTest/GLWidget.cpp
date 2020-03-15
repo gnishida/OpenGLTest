@@ -11,11 +11,10 @@ GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), program(0)
 GLWidget::~GLWidget()
 {
 	makeCurrent();
-	for (auto& asset : assets) {
-		asset.vbo.destroy();
-		asset.texture->destroy();
-		asset.vao->destroy();
+	for (int i = 0; i < assets.size(); i++) {
+		delete assets[i];
 	}
+	assets.clear();
 	delete program;
 	doneCurrent();
 }
@@ -70,9 +69,9 @@ void GLWidget::paintGL()
 	program->setUniformValue("matrix", m);
 
 	for (int i = 0; i < assets.size(); i++) {
-		assets[i].texture->bind();
-		assets[i].vao->bind();
-		glDrawArrays(GL_TRIANGLES, 0, assets[i].vertices.size());
+		assets[i]->createArrays();
+		assets[i]->bind();
+		glDrawArrays(GL_TRIANGLES, 0, assets[i]->numVertices());
 	}
 }
 
@@ -115,28 +114,15 @@ void GLWidget::makeObject()
 	};
 
 	for (int i = 0; i < 6; i++) {
-		assets[i].texture = new QOpenGLTexture((QImage(QString("images/side%1.png").arg(i + 1)).mirrored()));
+		assets[i] = new Asset(program);
+		assets[i]->setTexture(QString("images/side%1.png").arg(i + 1).toUtf8().constData());
 
-		assets[i].vao = new QOpenGLVertexArrayObject(this);
-		assets[i].vao->create();
-		assets[i].vao->bind();
-		assets[i].vbo.create();
-		assets[i].vbo.setUsagePattern(QOpenGLBuffer::StaticDraw);
-		assets[i].vbo.bind();
+		assets[i]->addVertex(coords[i][0][0], coords[i][0][1], coords[i][0][2], 0, 0);
+		assets[i]->addVertex(coords[i][1][0], coords[i][1][1], coords[i][1][2], 1, 0);
+		assets[i]->addVertex(coords[i][2][0], coords[i][2][1], coords[i][2][2], 1, 1);
 
-		assets[i].vertices.push_back({ coords[i][0][0], coords[i][0][1], coords[i][0][2], 0, 0 });		
-		assets[i].vertices.push_back({ coords[i][1][0], coords[i][1][1], coords[i][1][2], 1, 0 });
-		assets[i].vertices.push_back({ coords[i][2][0], coords[i][2][1], coords[i][2][2], 1, 1 });
-
-		assets[i].vertices.push_back({ coords[i][0][0], coords[i][0][1], coords[i][0][2], 0, 0 });
-		assets[i].vertices.push_back({ coords[i][2][0], coords[i][2][1], coords[i][2][2], 1, 1 });
-		assets[i].vertices.push_back({ coords[i][3][0], coords[i][3][1], coords[i][3][2], 0, 1 });
-
-		assets[i].vbo.allocate(assets[i].vertices.data(), assets[i].vertices.size() * sizeof(Vertex));
-
-		program->enableAttributeArray(PROGRAM_VERTEX_ATTRIBUTE);
-		program->enableAttributeArray(PROGRAM_TEXCOORD_ATTRIBUTE);
-		program->setAttributeBuffer(PROGRAM_VERTEX_ATTRIBUTE, GL_FLOAT, 0, 3, sizeof(Vertex));
-		program->setAttributeBuffer(PROGRAM_TEXCOORD_ATTRIBUTE, GL_FLOAT, offsetof(Vertex, u), 2, sizeof(Vertex));
+		assets[i]->addVertex(coords[i][0][0], coords[i][0][1], coords[i][0][2], 0, 0);
+		assets[i]->addVertex(coords[i][2][0], coords[i][2][1], coords[i][2][2], 1, 1);
+		assets[i]->addVertex(coords[i][3][0], coords[i][3][1], coords[i][3][2], 0, 1);
 	}
 }
