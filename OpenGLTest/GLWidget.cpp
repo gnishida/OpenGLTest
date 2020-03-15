@@ -6,6 +6,7 @@
 GLWidget::GLWidget(QWidget *parent)
 {
 	renderingManager = nullptr;
+	eyePosition = QVector3D(0, 0, 3);
 }
 
 GLWidget::~GLWidget()
@@ -42,14 +43,18 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-	QMatrix4x4 m;
-	m.ortho(-0.5f, +0.5f, +0.5f, -0.5f, 4.0f, 15.0f);
-	m.translate(0.0f, 0.0f, -10.0f);
-	m.rotate(rotation.x(), 1.0f, 0.0f, 0.0f);
-	m.rotate(rotation.y(), 0.0f, 1.0f, 0.0f);
-	m.rotate(rotation.z(), 0.0f, 0.0f, 1.0f);
+	QMatrix4x4 model;
+	model.rotate(rotation.x(), 1.0f, 0.0f, 0.0f);
+	model.rotate(rotation.y(), 0.0f, 1.0f, 0.0f);
+	model.rotate(rotation.z(), 0.0f, 0.0f, 1.0f);
 
-	renderingManager->render(m);
+	QMatrix4x4 view;
+	view.lookAt(eyePosition, QVector3D(0.0, 0.0, 0.0), QVector3D(0.0, 1.0, 0.0));
+
+	QMatrix4x4 proj;
+	proj.perspective(60.0, width() / height(), 0.1, 100.0);
+
+	renderingManager->render(proj * view * model);
 }
 
 void GLWidget::resizeGL(int width, int height)
@@ -57,12 +62,12 @@ void GLWidget::resizeGL(int width, int height)
 	renderingManager->setViewport(width, height);
 }
 
-void GLWidget::mousePressEvent(QMouseEvent *event)
+void GLWidget::mousePressEvent(QMouseEvent* event)
 {
 	lastPos = event->pos();
 }
 
-void GLWidget::mouseMoveEvent(QMouseEvent *event)
+void GLWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	int dx = event->x() - lastPos.x();
 	int dy = event->y() - lastPos.y();
@@ -74,6 +79,12 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 		rotateBy(QVector3D(dy, 0, dx));
 	}
 	lastPos = event->pos();
+}
+
+void GLWidget::wheelEvent(QWheelEvent* event)
+{
+	eyePosition.setZ(eyePosition.z() - event->delta() * 0.001);
+	update();
 }
 
 void GLWidget::makeObject()

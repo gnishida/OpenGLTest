@@ -14,6 +14,7 @@ class GLWidget : public QOpenGLWidget
 
 private:
 	QPoint lastPos;
+	QVector3D eyePosition;
 	QVector3D rotation;
 	RenderingManager* renderingManager;
 
@@ -29,8 +30,9 @@ protected:
 	void initializeGL() override;
 	void paintGL() override;
 	void resizeGL(int width, int height) override;
-	void mousePressEvent(QMouseEvent *event) override;
-	void mouseMoveEvent(QMouseEvent *event) override;
+	void mousePressEvent(QMouseEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
+	void wheelEvent(QWheelEvent* event) override;
 
 private:
 	void makeObject();
