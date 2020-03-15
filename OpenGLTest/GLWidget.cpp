@@ -3,6 +3,7 @@
 #include <QOpenGLTexture>
 #include <QMouseEvent>
 #include <iostream>
+#include "AssetUtils.h"
 
 GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), program(0)
 {
@@ -102,27 +103,11 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
 void GLWidget::makeObject()
 {
-	assets.resize(6);
+	assets.resize(1);
 
-	static const GLfloat coords[6][4][3] = {
-		{ { 0.2f, -0.2f, -0.2f }, { -0.2f, -0.2f, -0.2f }, { -0.2f, 0.2f, -0.2f }, { 0.2f, 0.2f, -0.2f } },
-		{ { 0.2f, 0.2f, -0.2f }, { -0.2f, 0.2f, -0.2f }, { -0.2f, 0.2f, 0.2f }, { 0.2f, 0.2f, 0.2f } },
-		{ { 0.2f, -0.2f, 0.2f }, { 0.2f, -0.2f, -0.2f }, { 0.2f, 0.2f, -0.2f }, { 0.2f, 0.2f, 0.2f } },
-		{ { -0.2f, -0.2f, -0.2f }, { -0.2f, -0.2f, 0.2f }, { -0.2f, 0.2f, 0.2f }, { -0.2f, 0.2f, -0.2f } },
-		{ { 0.2f, -0.2f, 0.2f }, { -0.2f, -0.2f, 0.2f }, { -0.2f, -0.2f, -0.2f }, { 0.2f, -0.2f, -0.2f } },
-		{ { -0.2f, -0.2f, 0.2f }, { 0.2f, -0.2f, 0.2f }, { 0.2f, 0.2f, 0.2f }, { -0.2f, 0.2f, 0.2f } }
-	};
+	assets[0] = new Asset(program);
 
-	for (int i = 0; i < 6; i++) {
-		assets[i] = new Asset(program);
-		assets[i]->setTexture(QString("images/side%1.png").arg(i + 1).toUtf8().constData());
+	assets[0]->setTexture(QString("images/earth.jpg").toUtf8().constData());
 
-		assets[i]->addVertex(coords[i][0][0], coords[i][0][1], coords[i][0][2], 0, 0);
-		assets[i]->addVertex(coords[i][1][0], coords[i][1][1], coords[i][1][2], 1, 0);
-		assets[i]->addVertex(coords[i][2][0], coords[i][2][1], coords[i][2][2], 1, 1);
-
-		assets[i]->addVertex(coords[i][0][0], coords[i][0][1], coords[i][0][2], 0, 0);
-		assets[i]->addVertex(coords[i][2][0], coords[i][2][1], coords[i][2][2], 1, 1);
-		assets[i]->addVertex(coords[i][3][0], coords[i][3][1], coords[i][3][2], 0, 1);
-	}
+	assets[0]->addVertices(AssetUtils::createRectangle(0.5, 0.4));
 }
