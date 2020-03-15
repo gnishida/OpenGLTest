@@ -4,7 +4,8 @@ RenderingManager::RenderingManager()
 {
 	initializeOpenGLFunctions();
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
+	glDepthFunc(GL_LEQUAL);
 
 	program = new QOpenGLShaderProgram;
 	program->addShaderFromSourceFile(QOpenGLShader::Vertex, "shaders/vert.glsl");
@@ -29,9 +30,9 @@ RenderingManager::~RenderingManager()
 	program = nullptr;
 }
 
-void RenderingManager::setViewport(int x, int y, int w, int h)
+void RenderingManager::setViewport(int width, int height)
 {
-	glViewport(x, y, w, h);
+	glViewport(0, 0, width, height);
 }
 
 void RenderingManager::addObject(const char* filename, const std::vector<Vertex>& vertices)
@@ -53,6 +54,10 @@ void RenderingManager::addObject(const char* filename, const std::vector<Vertex>
 void RenderingManager::render(const QMatrix4x4& cameraMatrix)
 {
 	glClearColor(0, 0.1, 0.1, 1);
+	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
+	glDepthFunc(GL_LEQUAL);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	program->setUniformValue("matrix", cameraMatrix);

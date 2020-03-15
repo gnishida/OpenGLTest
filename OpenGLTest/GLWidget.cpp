@@ -54,8 +54,7 @@ void GLWidget::paintGL()
 
 void GLWidget::resizeGL(int width, int height)
 {
-	int side = qMin(width, height);
-	renderingManager->setViewport((width - side) / 2, (height - side) / 2, side, side);
+	renderingManager->setViewport(width, height);
 }
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
@@ -79,5 +78,6 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
 void GLWidget::makeObject()
 {
-	renderingManager->addObject("images/earth.jpg", AssetUtils::createSphere(0.2));
+	renderingManager->addObject("images/side1.png", AssetUtils::createRectangle(0.5, 0.5));
+	renderingManager->addObject("images/earth.jpg", AssetUtils::createSphere(0.35));
 }
