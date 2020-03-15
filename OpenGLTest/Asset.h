@@ -4,17 +4,9 @@
 #include <QOpenGLTexture>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
+#include "Vertex.h"
 
-struct Vertex
-{
-	GLfloat x;
-	GLfloat y;
-	GLfloat z;
-	GLfloat u;
-	GLfloat v;
 
-	Vertex(GLfloat x, GLfloat y, GLfloat z, GLfloat u, GLfloat v) : x(x), y(y), z(z), u(u), v(v) {}
-};
 
 class Asset
 {
