@@ -14,13 +14,13 @@ QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
 
 struct Vertex
 {
-	float x;
-	float y;
-	float z;
-	float u;
-	float v;
+	GLfloat x;
+	GLfloat y;
+	GLfloat z;
+	GLfloat u;
+	GLfloat v;
 
-	Vertex(float x, float y, float z, float u, float v) : x(x), y(y), z(z), u(u), v(v) {}
+	Vertex(GLfloat x, GLfloat y, GLfloat z, GLfloat u, GLfloat v) : x(x), y(y), z(z), u(u), v(v) {}
 };
 
 class Asset
@@ -29,7 +29,7 @@ public:
 	QOpenGLVertexArrayObject* vao;
 	QOpenGLBuffer vbo;
 	std::shared_ptr<QOpenGLTexture> texture;
-	std::vector<GLfloat> vertices;
+	std::vector<Vertex> vertices;
 };
 
 class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions

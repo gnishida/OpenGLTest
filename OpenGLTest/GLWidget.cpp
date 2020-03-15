@@ -72,7 +72,7 @@ void GLWidget::paintGL()
 	for (int i = 0; i < assets.size(); i++) {
 		assets[i].texture->bind();
 		assets[i].vao->bind();
-		glDrawArrays(GL_TRIANGLES, 0, assets[i].vertices.size() / 5);
+		glDrawArrays(GL_TRIANGLES, 0, assets[i].vertices.size());
 	}
 }
 
@@ -105,7 +105,7 @@ void GLWidget::makeObject()
 {
 	assets.resize(6);
 
-	static const int coords[6][4][3] = {
+	static const GLfloat coords[6][4][3] = {
 		{ { +1, -1, -1 }, { -1, -1, -1 }, { -1, +1, -1 }, { +1, +1, -1 } },
 		{ { +1, +1, -1 }, { -1, +1, -1 }, { -1, +1, +1 }, { +1, +1, +1 } },
 		{ { +1, -1, +1 }, { +1, -1, -1 }, { +1, +1, -1 }, { +1, +1, +1 } },
@@ -120,53 +120,23 @@ void GLWidget::makeObject()
 		assets[i].vao = new QOpenGLVertexArrayObject(this);
 		assets[i].vao->create();
 		assets[i].vao->bind();
-		std::cout << assets[i].vao->objectId() << std::endl;
 		assets[i].vbo.create();
 		assets[i].vbo.setUsagePattern(QOpenGLBuffer::StaticDraw);
 		assets[i].vbo.bind();
-		std::cout << assets[i].vbo.bufferId() << std::endl;
 
-		assets[i].vertices.push_back(coords[i][0][0] * 0.2);
-		assets[i].vertices.push_back(coords[i][0][1] * 0.2);
-		assets[i].vertices.push_back(coords[i][0][2] * 0.2);
-		assets[i].vertices.push_back(0);
-		assets[i].vertices.push_back(0);
-		
-		assets[i].vertices.push_back(coords[i][1][0] * 0.2);
-		assets[i].vertices.push_back(coords[i][1][1] * 0.2);
-		assets[i].vertices.push_back(coords[i][1][2] * 0.2);
-		assets[i].vertices.push_back(1);
-		assets[i].vertices.push_back(0);
+		assets[i].vertices.push_back({ coords[i][0][0] * 0.2f, coords[i][0][1] * 0.2f, coords[i][0][2] * 0.2f, 0, 0 });		
+		assets[i].vertices.push_back({ coords[i][1][0] * 0.2f, coords[i][1][1] * 0.2f, coords[i][1][2] * 0.2f, 1, 0 });
+		assets[i].vertices.push_back({ coords[i][2][0] * 0.2f, coords[i][2][1] * 0.2f, coords[i][2][2] * 0.2f, 1, 1 });
 
-		assets[i].vertices.push_back(coords[i][2][0] * 0.2);
-		assets[i].vertices.push_back(coords[i][2][1] * 0.2);
-		assets[i].vertices.push_back(coords[i][2][2] * 0.2);
-		assets[i].vertices.push_back(1);
-		assets[i].vertices.push_back(1);
+		assets[i].vertices.push_back({ coords[i][0][0] * 0.2f, coords[i][0][1] * 0.2f, coords[i][0][2] * 0.2f, 0, 0 });
+		assets[i].vertices.push_back({ coords[i][2][0] * 0.2f, coords[i][2][1] * 0.2f, coords[i][2][2] * 0.2f, 1, 1 });
+		assets[i].vertices.push_back({ coords[i][3][0] * 0.2f, coords[i][3][1] * 0.2f, coords[i][3][2] * 0.2f, 0, 1 });
 
-		assets[i].vertices.push_back(coords[i][0][0] * 0.2);
-		assets[i].vertices.push_back(coords[i][0][1] * 0.2);
-		assets[i].vertices.push_back(coords[i][0][2] * 0.2);
-		assets[i].vertices.push_back(0);
-		assets[i].vertices.push_back(0);
-		
-		assets[i].vertices.push_back(coords[i][2][0] * 0.2);
-		assets[i].vertices.push_back(coords[i][2][1] * 0.2);
-		assets[i].vertices.push_back(coords[i][2][2] * 0.2);
-		assets[i].vertices.push_back(1);
-		assets[i].vertices.push_back(1);
-
-		assets[i].vertices.push_back(coords[i][3][0] * 0.2);
-		assets[i].vertices.push_back(coords[i][3][1] * 0.2);
-		assets[i].vertices.push_back(coords[i][3][2] * 0.2);
-		assets[i].vertices.push_back(0);
-		assets[i].vertices.push_back(1);
-
-		assets[i].vbo.allocate(assets[i].vertices.data(), assets[i].vertices.size() * sizeof(GLfloat));
+		assets[i].vbo.allocate(assets[i].vertices.data(), assets[i].vertices.size() * sizeof(Vertex));
 
 		program->enableAttributeArray(PROGRAM_VERTEX_ATTRIBUTE);
 		program->enableAttributeArray(PROGRAM_TEXCOORD_ATTRIBUTE);
-		program->setAttributeBuffer(PROGRAM_VERTEX_ATTRIBUTE, GL_FLOAT, 0, 3, 5 * sizeof(GLfloat));
-		program->setAttributeBuffer(PROGRAM_TEXCOORD_ATTRIBUTE, GL_FLOAT, 3 * sizeof(GLfloat), 2, 5 * sizeof(GLfloat));
+		program->setAttributeBuffer(PROGRAM_VERTEX_ATTRIBUTE, GL_FLOAT, 0, 3, sizeof(Vertex));
+		program->setAttributeBuffer(PROGRAM_TEXCOORD_ATTRIBUTE, GL_FLOAT, offsetof(Vertex, u), 2, sizeof(Vertex));
 	}
 }
