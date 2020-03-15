@@ -38,5 +38,6 @@ public:
 	void bind();
 	void release();
 	void addVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat u, GLfloat v);
+	void addVertices(const std::vector<Vertex>& vertices);
 	int numVertices() { return vertices.size(); }
 };

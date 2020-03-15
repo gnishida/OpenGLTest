@@ -31,7 +31,7 @@ void Asset::setTexture(const char* filename)
 
 /**
  * Create vertex array and send the data to GPU.
- * Note that if there is no update to the vertex array, this function does nothing.
+ * Note that if there is no update to the vertex array (i.e., dirty = false), this function does nothing.
  */
 void Asset::createArrays()
 {
@@ -82,5 +82,11 @@ void Asset::release()
 void Asset::addVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat u, GLfloat v)
 {
 	vertices.push_back(Vertex(x, y, z, u, v));
+	dirty = true;
+}
+
+void Asset::addVertices(const std::vector<Vertex>& vertices)
+{
+	this->vertices.insert(this->vertices.end(), vertices.begin(), vertices.end());
 	dirty = true;
 }
