@@ -28,7 +28,7 @@ class Asset
 public:
 	QOpenGLVertexArrayObject* vao;
 	QOpenGLBuffer vbo;
-	std::shared_ptr<QOpenGLTexture> texture;
+	QOpenGLTexture* texture;
 	std::vector<Vertex> vertices;
 };
 
@@ -59,9 +59,7 @@ private:
 
 	QPoint lastPos;
 	QVector3D rotation;
-	std::vector<QOpenGLTexture*> textures;
 	QOpenGLShaderProgram *program;
-	//QOpenGLBuffer vbo;
 
 	std::vector<Asset> assets;
 };

@@ -106,16 +106,16 @@ void GLWidget::makeObject()
 	assets.resize(6);
 
 	static const GLfloat coords[6][4][3] = {
-		{ { +1, -1, -1 }, { -1, -1, -1 }, { -1, +1, -1 }, { +1, +1, -1 } },
-		{ { +1, +1, -1 }, { -1, +1, -1 }, { -1, +1, +1 }, { +1, +1, +1 } },
-		{ { +1, -1, +1 }, { +1, -1, -1 }, { +1, +1, -1 }, { +1, +1, +1 } },
-		{ { -1, -1, -1 }, { -1, -1, +1 }, { -1, +1, +1 }, { -1, +1, -1 } },
-		{ { +1, -1, +1 }, { -1, -1, +1 }, { -1, -1, -1 }, { +1, -1, -1 } },
-		{ { -1, -1, +1 }, { +1, -1, +1 }, { +1, +1, +1 }, { -1, +1, +1 } }
+		{ { 0.2f, -0.2f, -0.2f }, { -0.2f, -0.2f, -0.2f }, { -0.2f, 0.2f, -0.2f }, { 0.2f, 0.2f, -0.2f } },
+		{ { 0.2f, 0.2f, -0.2f }, { -0.2f, 0.2f, -0.2f }, { -0.2f, 0.2f, 0.2f }, { 0.2f, 0.2f, 0.2f } },
+		{ { 0.2f, -0.2f, 0.2f }, { 0.2f, -0.2f, -0.2f }, { 0.2f, 0.2f, -0.2f }, { 0.2f, 0.2f, 0.2f } },
+		{ { -0.2f, -0.2f, -0.2f }, { -0.2f, -0.2f, 0.2f }, { -0.2f, 0.2f, 0.2f }, { -0.2f, 0.2f, -0.2f } },
+		{ { 0.2f, -0.2f, 0.2f }, { -0.2f, -0.2f, 0.2f }, { -0.2f, -0.2f, -0.2f }, { 0.2f, -0.2f, -0.2f } },
+		{ { -0.2f, -0.2f, 0.2f }, { 0.2f, -0.2f, 0.2f }, { 0.2f, 0.2f, 0.2f }, { -0.2f, 0.2f, 0.2f } }
 	};
 
 	for (int i = 0; i < 6; i++) {
-		assets[i].texture = std::make_shared<QOpenGLTexture>(QImage(QString("images/side%1.png").arg(i + 1)).mirrored());
+		assets[i].texture = new QOpenGLTexture((QImage(QString("images/side%1.png").arg(i + 1)).mirrored()));
 
 		assets[i].vao = new QOpenGLVertexArrayObject(this);
 		assets[i].vao->create();
@@ -124,13 +124,13 @@ void GLWidget::makeObject()
 		assets[i].vbo.setUsagePattern(QOpenGLBuffer::StaticDraw);
 		assets[i].vbo.bind();
 
-		assets[i].vertices.push_back({ coords[i][0][0] * 0.2f, coords[i][0][1] * 0.2f, coords[i][0][2] * 0.2f, 0, 0 });		
-		assets[i].vertices.push_back({ coords[i][1][0] * 0.2f, coords[i][1][1] * 0.2f, coords[i][1][2] * 0.2f, 1, 0 });
-		assets[i].vertices.push_back({ coords[i][2][0] * 0.2f, coords[i][2][1] * 0.2f, coords[i][2][2] * 0.2f, 1, 1 });
+		assets[i].vertices.push_back({ coords[i][0][0], coords[i][0][1], coords[i][0][2], 0, 0 });		
+		assets[i].vertices.push_back({ coords[i][1][0], coords[i][1][1], coords[i][1][2], 1, 0 });
+		assets[i].vertices.push_back({ coords[i][2][0], coords[i][2][1], coords[i][2][2], 1, 1 });
 
-		assets[i].vertices.push_back({ coords[i][0][0] * 0.2f, coords[i][0][1] * 0.2f, coords[i][0][2] * 0.2f, 0, 0 });
-		assets[i].vertices.push_back({ coords[i][2][0] * 0.2f, coords[i][2][1] * 0.2f, coords[i][2][2] * 0.2f, 1, 1 });
-		assets[i].vertices.push_back({ coords[i][3][0] * 0.2f, coords[i][3][1] * 0.2f, coords[i][3][2] * 0.2f, 0, 1 });
+		assets[i].vertices.push_back({ coords[i][0][0], coords[i][0][1], coords[i][0][2], 0, 0 });
+		assets[i].vertices.push_back({ coords[i][2][0], coords[i][2][1], coords[i][2][2], 1, 1 });
+		assets[i].vertices.push_back({ coords[i][3][0], coords[i][3][1], coords[i][3][2], 0, 1 });
 
 		assets[i].vbo.allocate(assets[i].vertices.data(), assets[i].vertices.size() * sizeof(Vertex));
 
