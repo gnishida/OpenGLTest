@@ -1,23 +1,21 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
-#include "Asset.h"
+#include "RenderingManager.h"
 
 #include <QOpenGLWidget>
-#include <QOpenGLFunctions>
 #include <QVector3D>
 
 #include <glm/glm.hpp>
 
-//QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram);
-//QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
-
-class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
+class GLWidget : public QOpenGLWidget
 {
 	Q_OBJECT
 
-public:
-	enum { PROGRAM_VERTEX_ATTRIBUTE = 0, PROGRAM_TEXCOORD_ATTRIBUTE = 1};
+private:
+	QPoint lastPos;
+	QVector3D rotation;
+	RenderingManager* renderingManager;
 
 public:
 	explicit GLWidget(QWidget *parent = 0);
@@ -36,12 +34,6 @@ protected:
 
 private:
 	void makeObject();
-
-	QPoint lastPos;
-	QVector3D rotation;
-	QOpenGLShaderProgram *program;
-
-	std::vector<Asset*> assets;
 };
 
 #endif

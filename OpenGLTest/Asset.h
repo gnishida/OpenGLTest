@@ -6,8 +6,6 @@
 #include <QOpenGLBuffer>
 #include "Vertex.h"
 
-
-
 class Asset
 {
 public:
@@ -29,7 +27,6 @@ public:
 	void createArrays();
 	void bind();
 	void release();
-	void addVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat u, GLfloat v);
 	void addVertices(const std::vector<Vertex>& vertices);
 	int numVertices() { return vertices.size(); }
 };
