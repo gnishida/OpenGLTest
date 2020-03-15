@@ -2,6 +2,7 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
 #include <QMouseEvent>
+#include <iostream>
 
 GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), program(0)
 {
@@ -10,9 +11,10 @@ GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), program(0)
 GLWidget::~GLWidget()
 {
 	makeCurrent();
-	vbo.destroy();
-	for (int i = 0; i < textures.size(); ++i) {
-		delete textures[i];
+	for (auto& asset : assets) {
+		asset.vbo.destroy();
+		asset.texture->destroy();
+		asset.vao->destroy();
 	}
 	delete program;
 	doneCurrent();
@@ -38,8 +40,6 @@ void GLWidget::initializeGL()
 {
 	initializeOpenGLFunctions();
 
-	makeObject();
-
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
@@ -52,11 +52,13 @@ void GLWidget::initializeGL()
 
 	program->bind();
 	program->setUniformValue("texture", 0);
+
+	makeObject();
 }
 
 void GLWidget::paintGL()
 {
-	glClearColor(0, 1, 0, 1);
+	glClearColor(0, 0.1, 0.1, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	QMatrix4x4 m;
@@ -65,18 +67,15 @@ void GLWidget::paintGL()
 	m.rotate(rotation.x(), 1.0f, 0.0f, 0.0f);
 	m.rotate(rotation.y(), 0.0f, 1.0f, 0.0f);
 	m.rotate(rotation.z(), 0.0f, 0.0f, 1.0f);
-
 	program->setUniformValue("matrix", m);
-	program->enableAttributeArray(PROGRAM_VERTEX_ATTRIBUTE);
-	program->enableAttributeArray(PROGRAM_TEXCOORD_ATTRIBUTE);
-	program->setAttributeBuffer(PROGRAM_VERTEX_ATTRIBUTE, GL_FLOAT, 0, 3, 5 * sizeof(GLfloat));
-	program->setAttributeBuffer(PROGRAM_TEXCOORD_ATTRIBUTE, GL_FLOAT, 3 * sizeof(GLfloat), 2, 5 * sizeof(GLfloat));
 
-	for (int i = 0; i < 6; ++i) {
-		textures[i]->bind();
-		glDrawArrays(GL_TRIANGLE_FAN, i * 4, 4);
+	for (int i = 0; i < assets.size(); i++) {
+		assets[i].texture->bind();
+		assets[i].vao->bind();
+		glDrawArrays(GL_TRIANGLES, 0, assets[i].vertices.size() / 5);
 	}
 }
+
 void GLWidget::resizeGL(int width, int height)
 {
 	int side = qMin(width, height);
@@ -104,6 +103,8 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
 void GLWidget::makeObject()
 {
+	assets.resize(6);
+
 	static const int coords[6][4][3] = {
 		{ { +1, -1, -1 }, { -1, -1, -1 }, { -1, +1, -1 }, { +1, +1, -1 } },
 		{ { +1, +1, -1 }, { -1, +1, -1 }, { -1, +1, +1 }, { +1, +1, +1 } },
@@ -113,24 +114,59 @@ void GLWidget::makeObject()
 		{ { -1, -1, +1 }, { +1, -1, +1 }, { +1, +1, +1 }, { -1, +1, +1 } }
 	};
 
-	for (int j = 0; j < 6; ++j) {
-		textures.push_back(new QOpenGLTexture(QImage(QString("images/side%1.png").arg(j + 1)).mirrored()));
-	}
+	for (int i = 0; i < 6; i++) {
+		assets[i].texture = std::make_shared<QOpenGLTexture>(QImage(QString("images/side%1.png").arg(i + 1)).mirrored());
 
-	QVector<GLfloat> vertData;
-	for (int i = 0; i < 6; ++i) {
-		for (int j = 0; j < 4; ++j) {
-			// vertex position
-			vertData.append(0.2 * coords[i][j][0]);
-			vertData.append(0.2 * coords[i][j][1]);
-			vertData.append(0.2 * coords[i][j][2]);
-			// texture coordinate
-			vertData.append(j == 0 || j == 3);
-			vertData.append(j == 0 || j == 1);
-		}
-	}
+		assets[i].vao = new QOpenGLVertexArrayObject(this);
+		assets[i].vao->create();
+		assets[i].vao->bind();
+		std::cout << assets[i].vao->objectId() << std::endl;
+		assets[i].vbo.create();
+		assets[i].vbo.setUsagePattern(QOpenGLBuffer::StaticDraw);
+		assets[i].vbo.bind();
+		std::cout << assets[i].vbo.bufferId() << std::endl;
 
-	vbo.create();
-	vbo.bind();
-	vbo.allocate(vertData.constData(), vertData.count() * sizeof(GLfloat));
+		assets[i].vertices.push_back(coords[i][0][0] * 0.2);
+		assets[i].vertices.push_back(coords[i][0][1] * 0.2);
+		assets[i].vertices.push_back(coords[i][0][2] * 0.2);
+		assets[i].vertices.push_back(0);
+		assets[i].vertices.push_back(0);
+		
+		assets[i].vertices.push_back(coords[i][1][0] * 0.2);
+		assets[i].vertices.push_back(coords[i][1][1] * 0.2);
+		assets[i].vertices.push_back(coords[i][1][2] * 0.2);
+		assets[i].vertices.push_back(1);
+		assets[i].vertices.push_back(0);
+
+		assets[i].vertices.push_back(coords[i][2][0] * 0.2);
+		assets[i].vertices.push_back(coords[i][2][1] * 0.2);
+		assets[i].vertices.push_back(coords[i][2][2] * 0.2);
+		assets[i].vertices.push_back(1);
+		assets[i].vertices.push_back(1);
+
+		assets[i].vertices.push_back(coords[i][0][0] * 0.2);
+		assets[i].vertices.push_back(coords[i][0][1] * 0.2);
+		assets[i].vertices.push_back(coords[i][0][2] * 0.2);
+		assets[i].vertices.push_back(0);
+		assets[i].vertices.push_back(0);
+		
+		assets[i].vertices.push_back(coords[i][2][0] * 0.2);
+		assets[i].vertices.push_back(coords[i][2][1] * 0.2);
+		assets[i].vertices.push_back(coords[i][2][2] * 0.2);
+		assets[i].vertices.push_back(1);
+		assets[i].vertices.push_back(1);
+
+		assets[i].vertices.push_back(coords[i][3][0] * 0.2);
+		assets[i].vertices.push_back(coords[i][3][1] * 0.2);
+		assets[i].vertices.push_back(coords[i][3][2] * 0.2);
+		assets[i].vertices.push_back(0);
+		assets[i].vertices.push_back(1);
+
+		assets[i].vbo.allocate(assets[i].vertices.data(), assets[i].vertices.size() * sizeof(GLfloat));
+
+		program->enableAttributeArray(PROGRAM_VERTEX_ATTRIBUTE);
+		program->enableAttributeArray(PROGRAM_TEXCOORD_ATTRIBUTE);
+		program->setAttributeBuffer(PROGRAM_VERTEX_ATTRIBUTE, GL_FLOAT, 0, 3, 5 * sizeof(GLfloat));
+		program->setAttributeBuffer(PROGRAM_TEXCOORD_ATTRIBUTE, GL_FLOAT, 3 * sizeof(GLfloat), 2, 5 * sizeof(GLfloat));
+	}
 }

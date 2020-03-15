@@ -3,11 +3,34 @@
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
+#include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QVector3D>
 
+#include <glm/glm.hpp>
+
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram);
 QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
+
+struct Vertex
+{
+	float x;
+	float y;
+	float z;
+	float u;
+	float v;
+
+	Vertex(float x, float y, float z, float u, float v) : x(x), y(y), z(z), u(u), v(v) {}
+};
+
+class Asset
+{
+public:
+	QOpenGLVertexArrayObject* vao;
+	QOpenGLBuffer vbo;
+	std::shared_ptr<QOpenGLTexture> texture;
+	std::vector<GLfloat> vertices;
+};
 
 class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -38,7 +61,9 @@ private:
 	QVector3D rotation;
 	std::vector<QOpenGLTexture*> textures;
 	QOpenGLShaderProgram *program;
-	QOpenGLBuffer vbo;
+	//QOpenGLBuffer vbo;
+
+	std::vector<Asset> assets;
 };
 
 #endif
