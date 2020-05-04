@@ -95,6 +95,6 @@ void GLWidget::wheelEvent(QWheelEvent* event)
 
 void GLWidget::makeObject()
 {
-	renderingManager->addObject("images/earth.jpg", AssetUtils::createRectangle(0.5, 0.5));
-	//renderingManager->addObject("images/side2.png", AssetUtils::createSphere(0.35));
+	//renderingManager->addObject("images/earth.jpg", AssetUtils::createRectangle(0.5, 0.5));
+	renderingManager->addObject("images/earth.jpg", AssetUtils::createSphere(0.0f, 0.0f, 0.0f, 0.35f));
 }

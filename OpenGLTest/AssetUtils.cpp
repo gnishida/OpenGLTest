@@ -26,13 +26,13 @@ std::vector<Vertex> AssetUtils::createSphere(float x, float y, float z, float ra
 			const float x3_coord = x + new_r2 * cos((i + 1) * 2 * M_PI / HOR_SLICES);
 			const float y3_coord = y + new_r2 * sin((i + 1) * 2 * M_PI / HOR_SLICES);
 
-			vertices.push_back({ x_coord, y_coord, z_coord, 1 - (float)i / HOR_SLICES, (float)j / VERT_SLICES });
-			vertices.push_back({ x2_coord, y2_coord, z_coord, 1 - (float)(i + 1) / HOR_SLICES, (float)j / VERT_SLICES });
-			vertices.push_back({ x3_coord, y3_coord, z2_coord, 1 - (float)(i + 1) / HOR_SLICES, (float)(j + 1) / VERT_SLICES });
+			vertices.push_back({ x_coord, y_coord, z_coord, (float)i / HOR_SLICES, (float)j / VERT_SLICES });
+			vertices.push_back({ x2_coord, y2_coord, z_coord, (float)(i + 1) / HOR_SLICES, (float)j / VERT_SLICES });
+			vertices.push_back({ x3_coord, y3_coord, z2_coord, (float)(i + 1) / HOR_SLICES, (float)(j + 1) / VERT_SLICES });
 
-			vertices.push_back({ x_coord, y_coord, z_coord, 1 - (float)i / HOR_SLICES, (float)j / VERT_SLICES });
-			vertices.push_back({ x3_coord, y3_coord, z2_coord, 1 - (float)(i + 1) / HOR_SLICES, (float)(j + 1) / VERT_SLICES });
-			vertices.push_back({ x4_coord, y4_coord, z2_coord, 1 - (float)i / HOR_SLICES, (float)(j + 1) / VERT_SLICES });
+			vertices.push_back({ x_coord, y_coord, z_coord, (float)i / HOR_SLICES, (float)j / VERT_SLICES });
+			vertices.push_back({ x3_coord, y3_coord, z2_coord, (float)(i + 1) / HOR_SLICES, (float)(j + 1) / VERT_SLICES });
+			vertices.push_back({ x4_coord, y4_coord, z2_coord, (float)i / HOR_SLICES, (float)(j + 1) / VERT_SLICES });
 		}
 	}
 
