@@ -4,8 +4,6 @@
 #include "RenderingManager.h"
 
 #include <QOpenGLWidget>
-#include <QVector3D>
-
 #include <glm/glm.hpp>
 
 class GLWidget : public QOpenGLWidget
@@ -14,8 +12,8 @@ class GLWidget : public QOpenGLWidget
 
 private:
 	QPoint lastPos;
-	QVector3D eyePosition;
-	QVector3D rotation;
+	glm::vec3 eyePosition;
+	glm::vec3 rotation;
 	RenderingManager* renderingManager;
 
 public:
@@ -24,7 +22,8 @@ public:
 
 	QSize minimumSizeHint() const override;
 	QSize sizeHint() const override;
-	void rotateBy(const QVector3D& rotationAngle);
+	void rotateBy(const glm::vec3& rotationAngle);
+	glm::mat4 calculateMVPMatrix();
 
 protected:
 	void initializeGL() override;

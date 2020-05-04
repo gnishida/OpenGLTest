@@ -1,12 +1,14 @@
 #include "GLWidget.h"
 #include <QMouseEvent>
-#include <iostream>
 #include "AssetUtils.h"
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 GLWidget::GLWidget(QWidget *parent)
 {
 	renderingManager = nullptr;
-	eyePosition = QVector3D(0, 0, 3);
+	eyePosition = glm::vec3(0, 0, 3);
 }
 
 GLWidget::~GLWidget()
@@ -29,10 +31,24 @@ QSize GLWidget::sizeHint() const
 	return QSize(200, 200);
 }
 
-void GLWidget::rotateBy(const QVector3D& rotationAngle)
+void GLWidget::rotateBy(const glm::vec3& rotationAngle)
 {
 	rotation += rotationAngle;
 	update();
+}
+
+glm::mat4 GLWidget::calculateMVPMatrix() {
+	glm::mat4 model;
+
+	model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	glm::mat4 view = glm::lookAt(eyePosition, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	glm::mat4 proj = glm::perspective(glm::radians(90.0f), (float)width() / height(), 0.1f, 10000.0f);
+
+	return proj * view * model;
 }
 
 void GLWidget::initializeGL()
@@ -43,18 +59,8 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-	QMatrix4x4 model;
-	model.rotate(rotation.x(), 1.0f, 0.0f, 0.0f);
-	model.rotate(rotation.y(), 0.0f, 1.0f, 0.0f);
-	model.rotate(rotation.z(), 0.0f, 0.0f, 1.0f);
-
-	QMatrix4x4 view;
-	view.lookAt(eyePosition, QVector3D(0.0, 0.0, 0.0), QVector3D(0.0, 1.0, 0.0));
-
-	QMatrix4x4 proj;
-	proj.perspective(60.0, width() / height(), 0.1, 100.0);
-
-	renderingManager->render(proj * view * model);
+	glm::mat4 mvp = calculateMVPMatrix();
+	renderingManager->render(mvp);
 }
 
 void GLWidget::resizeGL(int width, int height)
@@ -73,23 +79,22 @@ void GLWidget::mouseMoveEvent(QMouseEvent* event)
 	int dy = event->y() - lastPos.y();
 
 	if (event->buttons() & Qt::LeftButton) {
-		rotateBy(QVector3D(dy, dx, 0));
+		rotateBy(glm::vec3(dy, dx, 0));
 	}
 	else if (event->buttons() & Qt::RightButton) {
-		rotateBy(QVector3D(dy, 0, dx));
+		rotateBy(glm::vec3(dy, 0, dx));
 	}
 	lastPos = event->pos();
 }
 
 void GLWidget::wheelEvent(QWheelEvent* event)
 {
-	eyePosition.setZ(eyePosition.z() - event->delta() * 0.001);
+	eyePosition.z = eyePosition.z - event->delta() * 0.001;
 	update();
 }
 
 void GLWidget::makeObject()
 {
-	//renderingManager->addObject("images/earth.jpg", AssetUtils::createRectangle(0.5, 0.5));
+	renderingManager->addObject("images/earth.jpg", AssetUtils::createRectangle(0.5, 0.5));
 	//renderingManager->addObject("images/side2.png", AssetUtils::createSphere(0.35));
-	renderingManager->addObject("images/earth.jpg", AssetUtils::createPrism({ {-0.3, -0.1}, {-0.1, -0.3}, {0.1, -0.3}, {0.3, -0.1}, {0.3, 0.1}, {0.1, 0.3}, {-0.1, 0.3}, {-0.3, 0.1} }, 0.82));
 }

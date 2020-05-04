@@ -51,7 +51,17 @@ void RenderingManager::addObject(const char* filename, const std::vector<Vertex>
 	asset->addVertices(vertices);
 }
 
-void RenderingManager::render(const QMatrix4x4& cameraMatrix)
+void RenderingManager::removeObjects()
+{
+	for (auto it = assets.begin(); it != assets.end(); it++) {
+		Asset* asset = it->second;
+		delete asset;
+		asset = nullptr;
+	}
+	assets.clear();
+}
+
+void RenderingManager::render(const glm::mat4& cameraMatrix)
 {
 	glClearColor(0, 0.1, 0.1, 1);
 	glEnable(GL_DEPTH_TEST);
@@ -59,8 +69,11 @@ void RenderingManager::render(const QMatrix4x4& cameraMatrix)
 	glDepthFunc(GL_LEQUAL);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	program->setUniformValue("matrix", cameraMatrix);
+	QMatrix4x4 mat(cameraMatrix[0][0], cameraMatrix[1][0], cameraMatrix[2][0], cameraMatrix[3][0],
+		cameraMatrix[0][1], cameraMatrix[1][1], cameraMatrix[2][1], cameraMatrix[3][1],
+		cameraMatrix[0][2], cameraMatrix[1][2], cameraMatrix[2][2], cameraMatrix[3][2],
+		cameraMatrix[0][3], cameraMatrix[1][3], cameraMatrix[2][3], cameraMatrix[3][3]);
+	program->setUniformValue("matrix", mat);
 
 	for (auto it = assets.begin(); it != assets.end(); it++) {
 		Asset* asset = it->second;
