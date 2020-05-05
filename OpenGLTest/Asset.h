@@ -9,7 +9,7 @@
 class Asset
 {
 public:
-	enum { PROGRAM_VERTEX_ATTRIBUTE = 0, PROGRAM_TEXCOORD_ATTRIBUTE = 1 };
+	enum { PROGRAM_VERTEX_ATTRIBUTE = 0, PROGRAM_NORMAL_ATTRIBUTE = 1, PROGRAM_TEXCOORD_ATTRIBUTE = 2 };
 
 private:
 	QOpenGLShaderProgram *program;

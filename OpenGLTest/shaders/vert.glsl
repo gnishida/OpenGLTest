@@ -1,4 +1,5 @@
 attribute highp vec3 vertex;
+attribute highp vec3 normal;
 attribute mediump vec4 texCoord;
 
 varying mediump vec4 texc;

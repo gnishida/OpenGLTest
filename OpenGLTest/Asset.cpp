@@ -57,8 +57,10 @@ void Asset::createArrays()
 	vbo.allocate(vertices.data(), vertices.size() * sizeof(Vertex));
 
 	program->enableAttributeArray(PROGRAM_VERTEX_ATTRIBUTE);
+	program->enableAttributeArray(PROGRAM_NORMAL_ATTRIBUTE);
 	program->enableAttributeArray(PROGRAM_TEXCOORD_ATTRIBUTE);
 	program->setAttributeBuffer(PROGRAM_VERTEX_ATTRIBUTE, GL_FLOAT, 0, 3, sizeof(Vertex));
+	program->setAttributeBuffer(PROGRAM_NORMAL_ATTRIBUTE, GL_FLOAT, offsetof(Vertex, nx), 3, sizeof(Vertex));
 	program->setAttributeBuffer(PROGRAM_TEXCOORD_ATTRIBUTE, GL_FLOAT, offsetof(Vertex, u), 2, sizeof(Vertex));
 
 	dirty = false;

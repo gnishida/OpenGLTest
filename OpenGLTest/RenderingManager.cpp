@@ -11,6 +11,7 @@ RenderingManager::RenderingManager()
 	program->addShaderFromSourceFile(QOpenGLShader::Vertex, "shaders/vert.glsl");
 	program->addShaderFromSourceFile(QOpenGLShader::Fragment, "shaders/frag.glsl");
 	program->bindAttributeLocation("vertex", Asset::PROGRAM_VERTEX_ATTRIBUTE);
+	program->bindAttributeLocation("normal", Asset::PROGRAM_NORMAL_ATTRIBUTE);
 	program->bindAttributeLocation("texCoord", Asset::PROGRAM_TEXCOORD_ATTRIBUTE);
 	program->link();
 
