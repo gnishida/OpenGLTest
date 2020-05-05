@@ -1,8 +1,8 @@
 attribute highp vec3 vertex;
 attribute highp vec3 normal;
-attribute mediump vec4 texCoord;
+attribute mediump vec2 texCoord;
 
-varying mediump vec4 texc;
+varying mediump vec2 texc;
 uniform mediump mat4 matrix;
 
 void main(void)
